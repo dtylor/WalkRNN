@@ -1,12 +1,12 @@
-from n2v import node2vec
+from .n2v import node2vec
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 import networkx as nx
 import pandas as pd
 import numpy as np
-from graphwave import graphwave
-from graphwave.utils import utils
+from .graphwave import graphwave
+from .graphwave.utils import utils
 
 def GetStructuralSignatures(networkXGraph):
     """
