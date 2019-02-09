@@ -1,0 +1,18 @@
+Read in Node attributes (if available)
+- PCA -> KMeans on contiuous features
+- OneHot encode categoricals
+
+! What if a node has null e.g. no value for a particular feature?
+- maybe attribute encoding should be done on the basis of Node type (e.g. ZIPCode nodes don't have a LLC_Type feature)
+
+
+Experiments:
+
+    1. Handling irrelevant features 
+    Either omit, or mark not relevant
+
+    Person 1 highEarner  e1  Person 4 mediumEarner  e0  ZIPCode 2  e3  ...
+    or
+    Person 1 highEarner  e1  Person 4 mediumEarner  e0  ZIPCode 2 BLANK_CHARACTER  e3  ...
+
+    2. Create a new word combining node_label, graphwave_label, and attribute values
