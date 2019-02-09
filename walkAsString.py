@@ -8,13 +8,18 @@ import numpy as np
 from graphwave import graphwave
 from graphwave.utils import utils
 
-
-
-def GetStructuralSignatures():
+def GetStructuralSignatures(networkXGraph):
     """
     Get structural embeddings using GraphWave.
 
-    Learns structural signatures of each node using GraphWave, and adds these attributes to the 
+    Learns structural signatures of each node using GraphWave, and adds these learned structures to the node attributes on the NetworkX graph.
+
+    Example:
+
+    Attributes:
+        networkXGraph (networkx.classes.graph.Graph): A graph containing nodes, edges, and their attributes. Nodes must include an attribute called 'component'.
+
+    Returns: a NetworkX graph where structural embeddings are added as `structure` node attributes.
 
     """
     return True
