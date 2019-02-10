@@ -31,9 +31,6 @@ def GetStructuralSignatures(networkXGraph):
     keys = []
     nodes_list = []
 
-    # components = list(set(nx.get_node_attributes(G=networkXGraph, name='component').values()))
-    
-
     components = pd.DataFrame([{"node": k, "component": v} for k, v in nx.get_node_attributes(
         G=networkXGraph, name='component').items()]).groupby('component')['node'].apply(list).to_dict()
 
@@ -56,8 +53,8 @@ def GetStructuralSignatures(networkXGraph):
     km.fit(trans_data_all)
     labels_pred = km.labels_
 
-    out = pd.DataFrame(labels_pred)
-    out.index += 1
+    out = pd.DataFrame(labels_pred, index=keys)
+    # out.index += 1
     structure_labels = out[0].to_dict()
     nx.set_node_attributes(G=networkXGraph, values=structure_labels, name='structure')
 
