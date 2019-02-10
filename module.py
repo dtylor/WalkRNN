@@ -25,7 +25,7 @@ def GetStructuralSignatures(networkXGraph):
     Returns: a NetworkX graph where structural embeddings are added as `structure` node attributes.
 
     """
-    nb_clust = 6
+    nb_clust = 4
     trans_data_all = []
     n_components = 4
     keys = []
@@ -53,8 +53,7 @@ def GetStructuralSignatures(networkXGraph):
     km.fit(trans_data_all)
     labels_pred = km.labels_
 
-    out = pd.DataFrame(labels_pred, index=keys)
-    # out.index += 1
+    out = pd.DataFrame(labels_pred.astype(int), index=nodes_list)
     structure_labels = out[0].to_dict()
     nx.set_node_attributes(G=networkXGraph, values=structure_labels, name='structure')
 
