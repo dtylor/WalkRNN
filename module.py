@@ -11,7 +11,7 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 
-def GetStructuralSignatures(networkXGraph):
+def get_structural_signatures(networkXGraph):
     """
     Get structural embeddings using GraphWave.
 
@@ -59,7 +59,7 @@ def GetStructuralSignatures(networkXGraph):
 
     return networkXGraph
 
-def WalkAsString(networkXGraph, graphComponentLabels, featuresToOmit={"nodes":[], "edges":[]}):
+def walk_as_string(networkXGraph, graphComponentLabels, featuresToOmit={"nodes":[], "edges":[]}):
     """
     Generate random walks over a graph.
 
