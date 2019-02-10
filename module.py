@@ -11,6 +11,11 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 
+def _get_components(networkXGraph):
+    return pd.DataFrame([{"node": k, "component": v} for k, v in nx.get_node_attributes(
+        G=networkXGraph, name='component').items()]).groupby('component')['node'].apply(list).to_dict()
+
+
 def get_structural_signatures(networkXGraph):
     """
     Get structural embeddings using GraphWave.
@@ -31,8 +36,7 @@ def get_structural_signatures(networkXGraph):
     keys = []
     nodes_list = []
 
-    components = pd.DataFrame([{"node": k, "component": v} for k, v in nx.get_node_attributes(
-        G=networkXGraph, name='component').items()]).groupby('component')['node'].apply(list).to_dict()
+    components = _get_components(networkXGraph)
 
     for subgraph_id, nodes in components.items():
         subgraph = networkXGraph.subgraph(nodes)
