@@ -16,3 +16,13 @@ Experiments:
     Person 1 highEarner  e1  Person 4 mediumEarner  e0  ZIPCode 2 BLANK_CHARACTER  e3  ...
 
     2. Create a new word combining node_label, graphwave_label, and attribute values
+
+
+
+AIDs dataset has node_attributes
+- figure out how to express preprocessing operations as sklearn pipelines
+    - e.g. clustering on x,y coord pairs
+
+
+
+

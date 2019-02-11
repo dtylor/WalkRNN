@@ -63,7 +63,7 @@ def get_structural_signatures(networkXGraph):
 
     return networkXGraph
 
-def walk_as_string(networkXGraph, graphComponentLabels, featuresToOmit={"nodes":[], "edges":[]}):
+def walk_as_string(networkXGraph, graphComponentLabels, featuresToUse={"nodes":['label', 'structure'], "edges":['label']}):
     """
     Generate random walks over a graph.
 
@@ -79,11 +79,31 @@ def walk_as_string(networkXGraph, graphComponentLabels, featuresToOmit={"nodes":
                 2: 1,
                 3: -1
             }
-        featuresToOmit (dict): A dictionary of node and edge features to be omitted
+        featuresToUser (dict): A dictionary of node and edge features to be expressed in the walk sequence
 
     // return a dataframe where each row contains {`walk`, `graph_label (y)`}
 
     Returns: a DataFrame containing each walk, and the associated graph label.
     """
+    n2vG = node2vec.Graph(nx_G=networkXGraph, is_directed=False, p=1, q=.7)
+    n2vG.preprocess_transition_probs()
+    num_walks = 20
+    walk_length = 30
+    walks = n2vG.simulate_walks(num_walks, walk_length)
 
-    return True
+    def expressNode(node_idx):
+        node = networkXGraph.nodes[node_idx]
+        result = " ".join([str(node[attribute])
+                           for attribute in featuresToUser['nodes']])
+        return result
+    
+    def expressEdge(src_node, dst_node):
+        edge = networkXGraph.edges[src_node][dst_node]
+        result = " ".join([str(edge[attribute])
+                           for attribute in featuresToUser['edges']])
+        return result
+
+    walks_as_words = [expressNode(step) + " " + expressEdge(step, step+1) + " " +
+                      expressNode(step+1) for walk in walks for step in range(len(walk) - 1)]
+
+    return 
