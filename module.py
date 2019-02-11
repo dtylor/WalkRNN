@@ -32,11 +32,15 @@ def get_structural_signatures(networkXGraph):
     """
     nb_clust = 4
     trans_data_all = []
-    n_components = 4
+    n_components = 6
     keys = []
     nodes_list = []
 
+    trans_data = []
+
     components = _get_components(networkXGraph)
+
+    heat_signatures = []
 
     for subgraph_id, nodes in components.items():
         subgraph = networkXGraph.subgraph(nodes)
@@ -46,22 +50,20 @@ def get_structural_signatures(networkXGraph):
             print("Omitting graph " + str(subgraph_id) + " with node count: " +
                 str(len(subgraph.nodes)) + " < " + str(n_components))
         else:
-            pca = PCA(n_components)
-            trans_data = pca.fit_transform(StandardScaler().fit_transform(chi))
-            trans_data_all = trans_data_all + trans_data.tolist()
-            l = [subgraph_id] * len(subgraph.nodes)
-            keys = keys + l
-            nodes_list = nodes_list + list(subgraph.nodes())
+            heat_signatures += chi.tolist()
+            nodes_list += nodes
 
-    km = KMeans(n_clusters=nb_clust)
-    km.fit(trans_data_all)
+    pca = PCA(n_components = n_components)
+    trans_data_all = pca.fit_transform(StandardScaler().fit_transform(np.array(heat_signatures)))
+    km = KMeans(n_clusters = nb_clust).fit(trans_data_all)
+
     labels_pred = km.labels_
 
     out = pd.DataFrame(labels_pred.astype(int), index=nodes_list)
     structure_labels = out[0].to_dict()
     nx.set_node_attributes(G=networkXGraph, values=structure_labels, name='structure')
 
-    return networkXGraph
+    return networkXGraph, pca, km
 
 def walk_as_string(networkXGraph, graphComponentLabels, featuresToUse={"nodes":['label', 'structure'], "edges":['label']}):
     """
@@ -104,8 +106,6 @@ def walk_as_string(networkXGraph, graphComponentLabels, featuresToUse={"nodes":[
                            for attribute in featuresToUse['edges']])
         return result
 
-
-    #  sort walks because node2vec outputs them randomly
     sorted_walks = pd.DataFrame(walks).sort_values(0)
 
     walks = [list(a) for a in sorted_walks.as_matrix()]
