@@ -79,12 +79,13 @@ def walk_as_string(networkXGraph, graphComponentLabels, featuresToUse={"nodes":[
                 2: 1,
                 3: -1
             }
-        featuresToUser (dict): A dictionary of node and edge features to be expressed in the walk sequence
+        featuresToUse (dict): A dictionary of node and edge features to be expressed in the walk sequence
 
     // return a dataframe where each row contains {`walk`, `graph_label (y)`}
 
     Returns: a DataFrame containing each walk, and the associated graph label.
     """
+    
     n2vG = node2vec.Graph(nx_G=networkXGraph, is_directed=False, p=1, q=.7)
     n2vG.preprocess_transition_probs()
     num_walks = 20
@@ -94,16 +95,31 @@ def walk_as_string(networkXGraph, graphComponentLabels, featuresToUse={"nodes":[
     def expressNode(node_idx):
         node = networkXGraph.nodes[node_idx]
         result = " ".join([str(node[attribute])
-                           for attribute in featuresToUser['nodes']])
+                           for attribute in featuresToUse['nodes']])
         return result
     
     def expressEdge(src_node, dst_node):
-        edge = networkXGraph.edges[src_node][dst_node]
+        edge = networkXGraph.edges[src_node, dst_node]
         result = " ".join([str(edge[attribute])
-                           for attribute in featuresToUser['edges']])
+                           for attribute in featuresToUse['edges']])
         return result
 
-    walks_as_words = [expressNode(step) + " " + expressEdge(step, step+1) + " " +
-                      expressNode(step+1) for walk in walks for step in range(len(walk) - 1)]
 
-    return 
+    #  sort walks because node2vec outputs them randomly
+    sorted_walks = pd.DataFrame(walks).sort_values(0)
+
+    walks = [list(a) for a in sorted_walks.as_matrix()]
+
+    walks_as_words = [[expressNode(walk[step]) + " " + expressEdge(walk[step], walk[step+1]) + " " +
+                       expressNode(walk[step+1]) for step in range(len(walk) - 1)] for walk in walks]
+
+    print(len(walks_as_words))
+    print(len(np.array(walks)[:,0]))
+
+    result = pd.DataFrame({"walk": walks_as_words, "start_node": np.array(walks)[:,0]})
+
+    result['component'] = result['start_node'].map(nx.get_node_attributes(networkXGraph, name='component'))
+    result['label'] = result['component'].map(graphComponentLabels)
+
+    return result
+
