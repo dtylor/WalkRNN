@@ -86,36 +86,6 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
     return G
 
 
-
-mappings = {
-    "node_labels": {
-        0: "C",
-        1: "N",
-        2: "O",
-        3: "F",
-        4: "I",
-        5: "Cl",
-        6: "Br"
-    },
-    "edge_labels": {
-        0: "e_zero",
-        1: "e_one",
-        2: "e_two",
-        3: "e_three",
-        4: "e_four"
-    }
-}
-
-G = load_graph_kernel_graph(
-    '../datasets/MUTAG/', mappings=mappings)
-
-
-
-
-
-
-
-
 def load_graph_kernel_labels(path_to_dataset_dir, dataset=None):
     files = listdir(path_to_dataset_dir)
     if path_to_dataset_dir[-1] != sep:
