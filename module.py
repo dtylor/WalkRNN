@@ -110,16 +110,14 @@ def walk_as_string(networkXGraph, graphComponentLabels, featuresToUse={"nodes":[
 
     walks = [list(a) for a in sorted_walks.as_matrix()]
 
-    walks_as_words = [[expressNode(walk[step]) + " " + expressEdge(walk[step], walk[step+1]) + " " +
-                       expressNode(walk[step+1]) for step in range(len(walk) - 1)] for walk in walks]
-
-    print(len(walks_as_words))
-    print(len(np.array(walks)[:,0]))
+    walks_as_words = [" ".join([expressNode(walk[step]) + " " + expressEdge(walk[step], walk[step+1]) + " " +
+                       expressNode(walk[step+1]) for step in range(len(walk) - 1)]) for walk in walks]
 
     result = pd.DataFrame({"walk": walks_as_words, "start_node": np.array(walks)[:,0]})
 
     result['component'] = result['start_node'].map(nx.get_node_attributes(networkXGraph, name='component'))
     result['label'] = result['component'].map(graphComponentLabels)
 
-    return result
+    result = result[['walk', 'label', 'start_node', 'component']]
 
+    return result
