@@ -65,7 +65,7 @@ def get_structural_signatures(networkXGraph):
 
     return networkXGraph, pca, km
 
-def walk_as_string(networkXGraph, graphComponentLabels, featuresToUse={"nodes":['label', 'structure'], "edges":['label']}):
+def walk_as_string(networkXGraph, componentLabels):
     """
     Generate random walks over a graph.
 
@@ -75,48 +75,62 @@ def walk_as_string(networkXGraph, graphComponentLabels, featuresToUse={"nodes":[
 
     Attributes:
         networkXGraph (networkx.classes.graph.Graph): A graph containing nodes, edges, and their attributes. Nodes must include an attribute called 'component'.
-        graphComponentLabels (dict): A dictionary where the keys are graph component ids, and the value is the label
-            {
-                1: -1,
-                2: 1,
-                3: -1
-            }
-        featuresToUse (dict): A dictionary of node and edge features to be expressed in the walk sequence
-
-    // return a dataframe where each row contains {`walk`, `graph_label (y)`}
+        componentLabels (dict): A dictionary mapping graph components to their y-values.
 
     Returns: a DataFrame containing each walk, and the associated graph label.
     """
+
+    # TODO: Allow custom mapping for features e.g. pass a dict for node labels to convert them to chemical names
     
+    # graphComponentLabels = nx.get_node_attributes(G=networkXGraph, name='component')
+
+    nodeFeatures = list(
+        set([z for x in list(networkXGraph.nodes(data=True)) for z in x[1].keys()]))
+
+    edgeFeatures = list(
+        set([z for x in list(networkXGraph.edges(data=True)) for z in x[2].keys()]))
+
+    # Remove 'cheating' features (e.g. component)
+    if "component" in nodeFeatures:
+        nodeFeatures.remove("component")
+
+    # Make sure edges have weights
+    if "weight" in edgeFeatures:
+        edgeFeatures.remove("weight")
+    else:
+        nx.set_edge_attributes(
+            G=networkXGraph, values=1, name='weight')
+
     n2vG = node2vec.Graph(nx_G=networkXGraph, is_directed=False, p=1, q=.7)
     n2vG.preprocess_transition_probs()
     num_walks = 20
     walk_length = 30
     walks = n2vG.simulate_walks(num_walks, walk_length)
 
+
     def expressNode(node_idx):
         node = networkXGraph.nodes[node_idx]
         result = " ".join([str(node[attribute])
-                           for attribute in featuresToUse['nodes']])
+                           for attribute in nodeFeatures if attribute in node])
         return result
     
     def expressEdge(src_node, dst_node):
         edge = networkXGraph.edges[src_node, dst_node]
         result = " ".join([str(edge[attribute])
-                           for attribute in featuresToUse['edges']])
+                           for attribute in edgeFeatures if attribute in edge])
         return result
 
     sorted_walks = pd.DataFrame(walks).sort_values(0)
 
     walks = [list(a) for a in sorted_walks.as_matrix()]
 
-    walks_as_words = [" ".join([expressNode(walk[step]) + " " + expressEdge(walk[step], walk[step+1]) + " " +
+    walks_as_words = [expressNode(walk[0]) + " " + " ".join([expressEdge(walk[step], walk[step+1]) + " " +
                        expressNode(walk[step+1]) for step in range(len(walk) - 1)]) for walk in walks]
 
     result = pd.DataFrame({"walk": walks_as_words, "start_node": np.array(walks)[:,0]})
 
     result['component'] = result['start_node'].map(nx.get_node_attributes(networkXGraph, name='component'))
-    result['label'] = result['component'].map(graphComponentLabels)
+    result['label'] = result['component'].map(componentLabels)
 
     result = result[['walk', 'label', 'start_node', 'component']]
 
