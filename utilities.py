@@ -1,7 +1,36 @@
+from sklearn.cluster import KMeans
 import pandas as pd
 import numpy as np
 from os import listdir, sep
 import networkx as nx
+
+
+def transform_features(features_df, nb_clust=6):
+    """
+    Transforms mixed-type features into categoricals.
+
+    Parses through dtypes of each column, runs KMeans clustering on all columns of type float64, mapping the float values to discrete cluster labels.
+    
+    Attributes:
+        features_df (DataFrame): A dataframe containing feature columns and node (or edge) rows.
+
+    Returns: A DataFrame containing all categorical features, as well as the fitted KMeans model.
+
+    """
+
+    dtypes = features_df.dtypes
+    # int's are being read in as floats >:(
+    dtypes = dtypes[dtypes == 'float64']
+
+    kmeans_models = {}
+
+    for col_name, col_type in dtypes.items():
+        kmeans_models[col_name] = KMeans(
+            n_clusters=nb_clust).fit(features_df[col_name].values.reshape(-1, 1))
+        transformed_column = kmeans_models[col_name].labels_
+        features_df[col_name] = transformed_column
+
+    return features_df, kmeans_models
 
 def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
     """
@@ -12,6 +41,23 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
     Attributes:
         path_to_dataset_dir (str): Path to the directory containing the dataset files.
         dataset (str): Dataset-specific prefix if more than one dataset is in the directory. (optional)
+        mappings (dict): A dictionary describing how to map integer node/edge labels to domain-specific labels (as per dataset README). Also describes how to interpret columns in node_attributes.txt
+            AIDS dataset example:
+                mappings = {
+                    "node_labels": {
+                        "0": "C",
+                        "1": "O",
+                        "2": "N",
+                        "3": "Cl"
+                    },
+                    "edge_labels": {
+                        "0": "1",
+                        "1": "2",
+                        "2": "3"
+                    },
+                    "node_attributes": ["chem", "charge", "x", "y"]
+                }
+
 
     Returns: A NetworkX graph with node and component labels applied to each node.
 
@@ -82,6 +128,21 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
 
         nx.set_edge_attributes(G=G, values=edges, name='label')
 
+    # Node attributes
+    if dataset+"_node_attributes.txt" in listdir(path_to_dataset_dir):
+        node_attributes = pd.read_csv(path_to_dataset_dir + dataset + "_node_attributes.txt",
+                            header=None)
+        if "node_attributes" in mappings:
+            node_attributes = node_attributes.rename(
+                columns={x: mappings['node_attributes'][x] for x in range(len(mappings['node_attributes']))})
+        else:
+            node_attributes = node_attributes.rename(columns={x: "attr_"+x for x in range(len(node_attributes.columns))})
+        
+        node_attributes.index += 1
+
+        # transform here
+        node_attributes, kmeans_models = transform_features(node_attributes)
+        [nx.set_node_attributes(G, node_attributes[col].to_dict(), col) for col in node_attributes.columns]
 
     return G
 
