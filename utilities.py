@@ -18,7 +18,9 @@ def transform_features(features_df, nb_clust=6):
 
     """
 
-    dtypes = features_df.dtypes
+    new_features_df = features_df.copy()
+
+    dtypes = new_features_df.dtypes
     # int's are being read in as floats >:(
     dtypes = dtypes[dtypes == 'float64']
 
@@ -28,9 +30,9 @@ def transform_features(features_df, nb_clust=6):
         kmeans_models[col_name] = KMeans(
             n_clusters=nb_clust).fit(features_df[col_name].values.reshape(-1, 1))
         transformed_column = kmeans_models[col_name].labels_
-        features_df[col_name] = transformed_column
+        new_features_df[col_name] = transformed_column
 
-    return features_df, kmeans_models
+    return new_features_df, kmeans_models
 
 def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
     """
