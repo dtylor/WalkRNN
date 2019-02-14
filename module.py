@@ -31,16 +31,12 @@ def get_structural_signatures(networkXGraph):
 
     """
     nb_clust = 4
-    trans_data_all = []
     n_components = 6
-    keys = []
-    nodes_list = []
-
-    trans_data = []
 
     components = _get_components(networkXGraph)
 
     heat_signatures = []
+    nodes_list = []
 
     for subgraph_id, nodes in components.items():
         subgraph = networkXGraph.subgraph(nodes)
