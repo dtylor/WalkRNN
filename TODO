@@ -26,3 +26,23 @@ AIDs dataset has node_attributes
 
 
 
+## Parameters to play with
+num walks
+walk length
+num walks per component
+num kmean clusters
+num pca components
+classifier dropout
+language model dropout
+nl = num layers
+nh = num hidden layers
+
+x -> h -> y
+  ^  |
+  |__|
+
+
+## Immediate next steps
+- Figure out license
+- Add edge attributes
+- Finish end-to-end Colab notebook example
