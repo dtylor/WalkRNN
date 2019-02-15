@@ -28,3 +28,10 @@ Third party libraries used include:
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://github.com/aditya-grover/node2vec<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MIT License<br>
     
+Third party dataset used:
+@misc{KKMMN2016,
+  title  = {Benchmark Data Sets for Graph Kernels},
+  author = {Kristian Kersting and Nils M. Kriege and Christopher Morris and Petra Mutzel and Marion Neumann},
+  year   = {2016},
+  url    = {http://graphkernels.cs.tu-dortmund.de}
+}
