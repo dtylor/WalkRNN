@@ -28,5 +28,5 @@ Third party libraries used include:
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://github.com/aditya-grover/node2vec<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MIT License<br>
     
-Third party dataset used from this site: 
+Third party dataset downloaded from this site: 
 https://ls11-www.cs.tu-dortmund.de/staff/morris/graphkerneldatasets
