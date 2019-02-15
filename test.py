@@ -195,9 +195,9 @@ class TestWalkAsString(unittest.TestCase):
                 37:      "Tb"
             },
             "edge_labels": {
-                0: 1,
-                1: 2,
-                2: 3
+                0: "edge_1",
+                1: "edge_2",
+                2: "edge_3"
             },
             "node_attributes": ["chem", "charge", "x", "y"]
         }
@@ -207,9 +207,8 @@ class TestWalkAsString(unittest.TestCase):
         self.walks = walk_as_string(self.graph, self.y)
 
     def test_valid_words(self):
-        for walk in self.walks:
+        for walk in self.walks['walk']:
             w = walk.split(" ")
             for step in w:
-                if step[0] != 'e':
-                    self.assertTrue(len(step.split("_")) > 1, 'word does not contain underscore')
+                self.assertTrue(len(step.split("_")) > 1, 'word "' + step + '" does not contain underscore')
 

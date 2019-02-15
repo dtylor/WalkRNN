@@ -124,7 +124,7 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
             edges['label'] = edges.label.map(
                 mappings['edge_labels'])
         else:
-            edges['label'] = edges['label'].apply(lambda x: "e"+str(int(x)))
+            edges['label'] = edges['label'].apply(lambda x: "edge_"+str(int(x)))
 
         edges = edges.set_index(['src', 'dst'])['label'].to_dict()
 
@@ -138,7 +138,7 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
             node_attributes = node_attributes.rename(
                 columns={x: mappings['node_attributes'][x] for x in range(len(mappings['node_attributes']))})
         else:
-            node_attributes = node_attributes.rename(columns={x: "attr_"+x for x in range(len(node_attributes.columns))})
+            node_attributes = node_attributes.rename(columns={x: "attr_"+str(x) for x in range(len(node_attributes.columns))})
         
         node_attributes.index += 1
 

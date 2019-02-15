@@ -106,7 +106,7 @@ def walk_as_string(networkXGraph, componentLabels):
 
     def expressNode(node_idx):
         node = networkXGraph.nodes[node_idx]
-        result = " ".join([str(node[attribute])
+        result = " ".join([str(attribute)+"_"+str(node[attribute])
                            for attribute in nodeFeatures if attribute in node])
         return result
     
@@ -116,9 +116,13 @@ def walk_as_string(networkXGraph, componentLabels):
                            for attribute in edgeFeatures if attribute in edge])
         return result
 
-    sorted_walks = pd.DataFrame(walks).sort_values(0)
+    sorted_walks = pd.DataFrame(walks).sort_values(0).as_matrix()
 
-    walks = [list(a) for a in sorted_walks.as_matrix()]
+    print(sorted_walks[0])
+    print(sorted_walks[1])
+    print(sorted_walks[2])
+
+    walks = [list(a) for a in sorted_walks]
 
     walks_as_words = [expressNode(walk[0]) + " " + " ".join([expressEdge(walk[step], walk[step+1]) + " " +
                        expressNode(walk[step+1]) for step in range(len(walk) - 1)]) for walk in walks]
