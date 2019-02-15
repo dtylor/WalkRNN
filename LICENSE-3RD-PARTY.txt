@@ -1,0 +1,9 @@
+      graphwave
+      Copyright 2018 contributors at Stanford
+      https://github.com/snap-stanford/graphwave
+      MIT License
+
+      node2vec
+      Copyright (c) 2016 Aditya Grover
+      https://github.com/aditya-grover/node2vec
+      MIT License
