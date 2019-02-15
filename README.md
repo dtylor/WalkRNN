@@ -27,5 +27,3 @@ Third party libraries used include:<br>
     https://github.com/aditya-grover/node2vec<br>
     MIT License<br>
     
-## Acknowledgement
-We would like to thank the authors of [node2vec](https://github.com/aditya-grover/node2vec) and [graphwave](https://github.com/snap-stanford/graphwave) for the open access of their implementations.  Our utility automates portions of their code.
