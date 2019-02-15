@@ -17,12 +17,12 @@ Run `python3 -m unittest test.py`
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 Third party libraries used include:
 
-#graphwave<br>
+**graphwave**<br>
     Copyright 2018 contributors at Stanford<br>
     https://github.com/snap-stanford/graphwave<br>
     MIT License<br>
 
-#node2vec<br>
+**node2vec**<br>
     Copyright (c) 2016 Aditya Grover<br>
     https://github.com/aditya-grover/node2vec<br>
     MIT License<br>
