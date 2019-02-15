@@ -16,7 +16,8 @@ Run `python3 -m unittest test.py`
 ## License
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details. <br>
 
-Third party libraries used include:<br>
+Third party libraries used include:
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**graphwave**<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copyright 2018 contributors at Stanford<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://github.com/snap-stanford/graphwave<br>
