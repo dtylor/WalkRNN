@@ -35,7 +35,7 @@ class TestLoadGraph(unittest.TestCase):
         return True
 
     def test_node_labels(self):
-        labels = list(set(nx.get_node_attributes(self.graph, 'label').values()))
+        labels = list(set(nx.get_node_attributes(self.graph, 'label_0').values()))
         self.assertGreater(len(labels), 0, 'loaded Graph has no node labels')
         return True
 
