@@ -68,7 +68,7 @@ class TestLoadGraph(unittest.TestCase):
 class TestGetStructuralSignatures(unittest.TestCase):
     def setUp(self):
         mappings = {
-            "node_labels": {
+            "node_labels": [{
                 0:       "C",
                 1:       "O",
                 2:       "N",
@@ -107,7 +107,7 @@ class TestGetStructuralSignatures(unittest.TestCase):
                 35:      "Tl",
                 36:      "Ni",
                 37:      "Tb"
-            },
+            }],
             "edge_labels": {
                 0: 1,
                 1: 2,
@@ -128,7 +128,7 @@ class TestGetStructuralSignatures(unittest.TestCase):
 class TestWalkAsString(unittest.TestCase):
     def setUp(self):
         mappings = {
-            "node_labels": {
+            "node_labels": [{
                 0:       "C",
                 1:       "O",
                 2:       "N",
@@ -167,7 +167,7 @@ class TestWalkAsString(unittest.TestCase):
                 35:      "Tl",
                 36:      "Ni",
                 37:      "Tb"
-            },
+            }],
             "edge_labels": {
                 0: "edge_1",
                 1: "edge_2",

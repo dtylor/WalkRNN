@@ -156,11 +156,14 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
                 columns={x: "attr_"+str(x) for x in range(len(edge_attributes.columns))})
 
         edge_attributes.index += 1
-
+    
         # transform here
         edge_attributes, kmeans_models = transform_features(edge_attributes)
+        edge_attributes.index = edges.keys()
         [nx.set_edge_attributes(G, edge_attributes[col].to_dict(), col)
          for col in edge_attributes.columns]
+
+        print ("DONE")
 
     return G
 
