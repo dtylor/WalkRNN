@@ -45,18 +45,15 @@ class TestLoadGraph(unittest.TestCase):
         return True
 
     def test_node_attributes(self):
-        chem = nx.get_node_attributes(self.graph, 'chem')
+        attr_0 = nx.get_node_attributes(self.graph, 'attr_0')
         self.assertGreater(
-            len(chem), 0, 'loaded Graph has no "chem" attributes')
-        charge = nx.get_node_attributes(self.graph, 'charge')
+            len(attr_0), 0, 'loaded Graph has no "attr_0" attributes')
+        attr_1 = nx.get_node_attributes(self.graph, 'attr_1')
         self.assertGreater(
-            len(charge), 0, 'loaded Graph has no "charge" attributes')
-        x = nx.get_node_attributes(self.graph, 'x')
+            len(attr_1), 0, 'loaded Graph has no "attr_1" attributes')
+        attr_2 = nx.get_node_attributes(self.graph, 'attr_2')
         self.assertGreater(
-            len(x), 0, 'loaded Graph has no "x" attributes')
-        y = nx.get_node_attributes(self.graph, 'y')
-        self.assertGreater(
-            len(y), 0, 'loaded Graph has no "y" attributes')
+            len(attr_2), 0, 'loaded Graph has no "attr_2" attributes')
         return True
 
 class TestGetStructuralSignatures(unittest.TestCase):
