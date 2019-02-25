@@ -46,12 +46,14 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
         mappings (dict): A dictionary describing how to map integer node/edge labels to domain-specific labels (as per dataset README). Also describes how to interpret columns in node_attributes.txt
             AIDS dataset example:
                 mappings = {
-                    "node_labels": {
+                    "node_labels": [{
                         "0": "C",
                         "1": "O",
                         "2": "N",
                         "3": "Cl"
-                    },
+                    }, {
+                        ...mappings for column 2 of node_labels
+                    }],
                     "edge_labels": {
                         "0": "1",
                         "1": "2",
@@ -98,16 +100,12 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
     node_labels = pd.read_csv(path_to_dataset_dir +
                               dataset + "_node_labels.txt", header=None)
     node_labels.index += 1
-    node_labels = node_labels.rename(columns={0: "label"})
     
     if "node_labels" in mappings:
-        node_labels['label'] = node_labels.label.map(
-            mappings['node_labels'])
-    
-    node_labels = node_labels['label'].to_dict()
-
-    nx.set_node_attributes(G=G, values=node_labels, name='label')
-
+        for column in range(len(node_labels.columns)):
+            this_label = node_labels[column].map(
+                mappings['node_labels'][column]).to_dict()
+            nx.set_node_attributes(G=G, values=this_label, name='label_'+str(column))
 
     # Edge Labels
     if dataset+"_edge_labels.txt" in listdir(path_to_dataset_dir):
@@ -145,6 +143,27 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
         # transform here
         node_attributes, kmeans_models = transform_features(node_attributes)
         [nx.set_node_attributes(G, node_attributes[col].to_dict(), col) for col in node_attributes.columns]
+
+    # Edge attributes
+    if dataset+"_edge_attributes.txt" in listdir(path_to_dataset_dir):
+        edge_attributes = pd.read_csv(path_to_dataset_dir + dataset + "_edge_attributes.txt",
+                                      header=None)
+        if "edge_attributes" in mappings:
+            edge_attributes = edge_attributes.rename(
+                columns={x: mappings['edge_attributes'][x] for x in range(len(mappings['edge_attributes']))})
+        else:
+            edge_attributes = edge_attributes.rename(
+                columns={x: "attr_"+str(x) for x in range(len(edge_attributes.columns))})
+
+        edge_attributes.index += 1
+    
+        # transform here
+        edge_attributes, kmeans_models = transform_features(edge_attributes)
+        edge_attributes.index = edges.keys()
+        [nx.set_edge_attributes(G, edge_attributes[col].to_dict(), col)
+         for col in edge_attributes.columns]
+
+        print ("DONE")
 
     return G
 

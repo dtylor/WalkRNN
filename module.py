@@ -112,7 +112,7 @@ def walk_as_string(networkXGraph, componentLabels):
     
     def expressEdge(src_node, dst_node):
         edge = networkXGraph.edges[src_node, dst_node]
-        result = " ".join([str(edge[attribute])
+        result = " ".join([str(attribute)+"_"+str(edge[attribute])
                            for attribute in edgeFeatures if attribute in edge])
         return result
 
