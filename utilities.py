@@ -144,6 +144,24 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
         node_attributes, kmeans_models = transform_features(node_attributes)
         [nx.set_node_attributes(G, node_attributes[col].to_dict(), col) for col in node_attributes.columns]
 
+    # Edge attributes
+    if dataset+"_edge_attributes.txt" in listdir(path_to_dataset_dir):
+        edge_attributes = pd.read_csv(path_to_dataset_dir + dataset + "_edge_attributes.txt",
+                                      header=None)
+        if "edge_attributes" in mappings:
+            edge_attributes = edge_attributes.rename(
+                columns={x: mappings['edge_attributes'][x] for x in range(len(mappings['edge_attributes']))})
+        else:
+            edge_attributes = edge_attributes.rename(
+                columns={x: "attr_"+str(x) for x in range(len(edge_attributes.columns))})
+
+        edge_attributes.index += 1
+
+        # transform here
+        edge_attributes, kmeans_models = transform_features(edge_attributes)
+        [nx.set_edge_attributes(G, edge_attributes[col].to_dict(), col)
+         for col in edge_attributes.columns]
+
     return G
 
 
