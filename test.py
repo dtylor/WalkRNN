@@ -21,7 +21,6 @@ class TestLoadGraph(unittest.TestCase):
                 0:	"wedge",
                 1:	"arrangement"
             },
-            # "node_attributes": ["chem", "charge", "x", "y"]
         }
         self.graph = load_graph_kernel_graph("./Cuneiform", mappings=mappings)
         self.y = load_graph_kernel_labels("./Cuneiform")

@@ -46,12 +46,14 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
         mappings (dict): A dictionary describing how to map integer node/edge labels to domain-specific labels (as per dataset README). Also describes how to interpret columns in node_attributes.txt
             AIDS dataset example:
                 mappings = {
-                    "node_labels": {
+                    "node_labels": [{
                         "0": "C",
                         "1": "O",
                         "2": "N",
                         "3": "Cl"
-                    },
+                    }, {
+                        ...mappings for column 2 of node_labels
+                    }],
                     "edge_labels": {
                         "0": "1",
                         "1": "2",
@@ -98,15 +100,19 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
     node_labels = pd.read_csv(path_to_dataset_dir +
                               dataset + "_node_labels.txt", header=None)
     node_labels.index += 1
-    node_labels = node_labels.rename(columns={0: "label"})
+    # node_labels = node_labels.rename(columns={0: "label"})
     
     if "node_labels" in mappings:
-        node_labels['label'] = node_labels.label.map(
-            mappings['node_labels'])
+        for column in range(len(node_labels)):
+            this_label = node_labels[column].map(
+                mappings['node_labels'][column]).to_dict()
+            nx.set_node_attributes(G=G, values=this_label, name='label_'+column)
+        # node_labels['label'] = node_labels.label.map(
+        #     mappings['node_labels'])
     
-    node_labels = node_labels['label'].to_dict()
+    # node_labels = node_labels['label'].to_dict()
 
-    nx.set_node_attributes(G=G, values=node_labels, name='label')
+    # nx.set_node_attributes(G=G, values=node_labels, name='label')
 
 
     # Edge Labels
