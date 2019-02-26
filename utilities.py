@@ -150,10 +150,10 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
                                       header=None)
         if "edge_attributes" in mappings:
             edge_attributes = edge_attributes.rename(
-                columns={x: mappings['edge_attributes'][x] for x in range(len(mappings['edge_attributes']))})
+                columns={x: "edge_"+mappings['edge_attributes'][x] for x in range(len(mappings['edge_attributes']))})
         else:
             edge_attributes = edge_attributes.rename(
-                columns={x: "attr_"+str(x) for x in range(len(edge_attributes.columns))})
+                columns={x: "edge_attr_"+str(x) for x in range(len(edge_attributes.columns))})
 
         edge_attributes.index += 1
     

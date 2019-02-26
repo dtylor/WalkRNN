@@ -57,12 +57,12 @@ class TestUtilityFunctions(unittest.TestCase):
         return True
 
     def test_edge_attributes(self):
-        attr_0 = nx.get_edge_attributes(self.graph, 'attr_0')
+        attr_0 = nx.get_edge_attributes(self.graph, 'edge_attr_0')
         self.assertGreater(
-            len(attr_0), 0, 'loaded Graph edges have no "attr_0" attributes')
-        attr_1 = nx.get_edge_attributes(self.graph, 'attr_1')
+            len(attr_0), 0, 'loaded Graph edges have no "edge_attr_0" attributes')
+        attr_1 = nx.get_edge_attributes(self.graph, 'edge_attr_1')
         self.assertGreater(
-            len(attr_1), 0, 'loaded Graph edges have no "attr_1" attributes')
+            len(attr_1), 0, 'loaded Graph edges have no "edge_attr_1" attributes')
         return True
 
 class TestModuleFunctions(unittest.TestCase):
