@@ -16,7 +16,7 @@ def _get_components(networkXGraph):
         G=networkXGraph, name='component').items()]).groupby('component')['node'].apply(list).to_dict()
 
 
-def get_structural_signatures(networkXGraph):
+def get_structural_signatures(networkXGraph, params={'num_kmeans_clusters': 4, "num_pca_components": 6}):
     """
     Get structural embeddings using GraphWave.
 
@@ -30,8 +30,8 @@ def get_structural_signatures(networkXGraph):
     Returns: a NetworkX graph where structural embeddings are added as `structure` node attributes.
 
     """
-    nb_clust = 4
-    n_components = 6
+    nb_clust = params['num_kmeans_clusters']
+    n_components = params['num_pca_components']
 
     components = _get_components(networkXGraph)
 
@@ -61,7 +61,7 @@ def get_structural_signatures(networkXGraph):
 
     return networkXGraph, pca, km
 
-def walk_as_string(networkXGraph, componentLabels):
+def walk_as_string(networkXGraph, componentLabels, params={'num_walks': 20, 'walk_length': 30}):
     """
     Generate random walks over a graph.
 
@@ -79,6 +79,9 @@ def walk_as_string(networkXGraph, componentLabels):
     # TODO: Allow custom mapping for features e.g. pass a dict for node labels to convert them to chemical names
     
     # graphComponentLabels = nx.get_node_attributes(G=networkXGraph, name='component')
+
+    num_walks = params['num_walks']
+    walk_length = params['walk_length']
 
     nodeFeatures = list(
         set([z for x in list(networkXGraph.nodes(data=True)) for z in x[1].keys()]))
@@ -99,8 +102,6 @@ def walk_as_string(networkXGraph, componentLabels):
 
     n2vG = node2vec.Graph(nx_G=networkXGraph, is_directed=False, p=1, q=.7)
     n2vG.preprocess_transition_probs()
-    num_walks = 20
-    walk_length = 30
     walks = n2vG.simulate_walks(num_walks, walk_length)
 
 
