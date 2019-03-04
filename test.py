@@ -81,40 +81,40 @@ class TestUtilityFunctions(unittest.TestCase):
             len(attr_1), 0, 'loaded Graph edges have no "edge_attr_1" attributes')
         return True
 
-# class TestModuleFunctions(unittest.TestCase):
-#     def setUp(self):
-#         mappings = {
-#             "node_labels": [{
-#                 0:  "depthPoint",
-#                 1:	"tailVertex",
-#                 2:	"leftVertex",
-#                 3:	"rightVertex",
-#             }, {
-#                 0:	"vertical",
-#                 1:	"Winkelhaken",
-#                 2:	"horizontal"
-#             }],
-#             "edge_labels": {
-#                 0:	"wedge",
-#                 1:	"arrangement"
-#             },
-#         }
-#         self.graph = load_graph_kernel_graph("./Cuneiform", mappings=mappings)
-#         self.y = load_graph_kernel_labels("./Cuneiform")
-#         self.graph, self.pca, self.km = get_structural_signatures(self.graph)
-#         self.walks = walk_as_string(self.graph, self.y)
+class TestModuleFunctions(unittest.TestCase):
+    def setUp(self):
+        mappings = {
+            "node_labels": [{
+                0:  "depthPoint",
+                1:	"tailVertex",
+                2:	"leftVertex",
+                3:	"rightVertex",
+            }, {
+                0:	"vertical",
+                1:	"Winkelhaken",
+                2:	"horizontal"
+            }],
+            "edge_labels": {
+                0:	"wedge",
+                1:	"arrangement"
+            },
+        }
+        self.graph = load_graph_kernel_graph("./Cuneiform", mappings=mappings)
+        self.y = load_graph_kernel_labels("./Cuneiform")
+        self.graph, self.pca, self.km = get_structural_signatures(self.graph)
+        self.walks = walk_as_string(self.graph, self.y)
 
-#     def test_structural_signatures_assigned(self):
-#         structs = nx.get_node_attributes(self.graph, 'structure')
-#         structs = list(set(structs.values()))
-#         self.assertGreater(
-#             len(structs), 1, 'structures not assigned as node attributes, or are homogeneous')
-#         return True
+    def test_structural_signatures_assigned(self):
+        structs = nx.get_node_attributes(self.graph, 'structure')
+        structs = list(set(structs.values()))
+        self.assertGreater(
+            len(structs), 1, 'structures not assigned as node attributes, or are homogeneous')
+        return True
 
-#     def test_valid_words(self):
-#         for walk in self.walks['walk']:
-#             w = walk.split(" ")
-#             for step in w:
-#                 self.assertTrue(len(step.split("_")) > 1, 'word "' +
-#                                 step + '" does not contain underscore')
+    def test_valid_words(self):
+        for walk in self.walks['walk']:
+            w = walk.split(" ")
+            for step in w:
+                self.assertTrue(len(step.split("_")) > 1, 'word "' +
+                                step + '" does not contain underscore')
 
