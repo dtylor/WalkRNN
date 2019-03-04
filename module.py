@@ -16,7 +16,7 @@ def _get_components(networkXGraph):
         G=networkXGraph, name='component').items()]).groupby('component')['node'].apply(list).to_dict()
 
 
-def get_structural_signatures(networkXGraph, params={'num_kmeans_clusters': 4, "num_pca_components": 6}):
+def get_structural_signatures(networkXGraph, vocab_size=1, params={'num_kmeans_clusters': 4, "num_pca_components": 6}):
     """
     Get structural embeddings using GraphWave.
 
@@ -56,6 +56,7 @@ def get_structural_signatures(networkXGraph, params={'num_kmeans_clusters': 4, "
     labels_pred = km.labels_
 
     out = pd.DataFrame(labels_pred.astype(int), index=nodes_list)
+    out[0] += vocab_size
     structure_labels = out[0].to_dict()
     nx.set_node_attributes(G=networkXGraph, values=structure_labels, name='structure')
 
@@ -85,6 +86,8 @@ def walk_as_string(networkXGraph, componentLabels, params={'num_walks': 20, 'wal
 
     nodeFeatures = list(
         set([z for x in list(networkXGraph.nodes(data=True)) for z in x[1].keys()]))
+
+    nodeFeatures.remove('component')
 
     edgeFeatures = list(
         set([z for x in list(networkXGraph.edges(data=True)) for z in x[2].keys()]))
