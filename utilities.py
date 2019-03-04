@@ -83,6 +83,8 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
                          delimiter=',', nodetype=int, encoding="utf-8")
     
 
+    current_vocab_size = 0
+
     # Components
     components = pd.read_csv(
         path_to_dataset_dir + dataset + "_graph_indicator.txt", header=None)
@@ -90,8 +92,9 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
     components.index += 1
     components = components.rename(columns={0: "component"})
 
-    if "components" in mappings:
-        components['component'] = components.component.map(mappings['components'])
+    # if "components" in mappings:
+    #     components['component'] = components.component.map(mappings['components'])
+    current_vocab_size = len(components.component.unique())
     components = components.component.to_dict()
 
     nx.set_node_attributes(G=G, values=components, name='component')
@@ -101,16 +104,23 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
                               dataset + "_node_labels.txt", header=None)
     node_labels.index += 1
     
-    if "node_labels" in mappings:
-        for column in range(len(node_labels.columns)):
-            this_label = node_labels[column].map(
-                mappings['node_labels'][column]).to_dict()
-            nx.set_node_attributes(G=G, values=this_label, name='label_'+str(column))
-    else:
-        for column in range(len(node_labels.columns)):
-            this_label = node_labels[column].to_dict()
-            nx.set_node_attributes(
-                G=G, values=this_label, name='label_'+str(column))
+    # if "node_labels" in mappings:
+    #     for column in range(len(node_labels.columns)):
+    #         this_label = node_labels[column].map(
+    #             mappings['node_labels'][column]).to_dict()
+    #         nx.set_node_attributes(G=G, values=this_label, name='label_'+str(column))
+    # else:
+    #     for column in range(len(node_labels.columns)):
+    #         this_label = node_labels[column].to_dict()
+    #         nx.set_node_attributes(
+    #             G=G, values=this_label, name='label_'+str(column))
+    for column in range(len(node_labels.columns)):
+        number_of_labels = len(node_labels[column].unique())
+        node_labels[column] += current_vocab_size
+        this_label = node_labels[column].to_dict()
+        nx.set_node_attributes(
+            G=G, values=this_label, name='label_'+str(column))
+        current_vocab_size += number_of_labels
 
     # Edge Labels
     if dataset+"_edge_labels.txt" in listdir(path_to_dataset_dir):
@@ -123,11 +133,15 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
         edge_labels.index += 1
         edges['label'] = edge_labels[0]
 
-        if "edge_labels" in mappings:
-            edges['label'] = edges.label.map(
-                mappings['edge_labels'])
-        else:
-            edges['label'] = edges['label'].apply(lambda x: "edge_"+str(int(x)))
+        # if "edge_labels" in mappings:
+        #     edges['label'] = edges.label.map(
+        #         mappings['edge_labels'])
+        # else:
+        #     edges['label'] = edges['label'].apply(lambda x: "edge_"+str(int(x)))
+
+        number_of_labels = len(edges['label'].unique())
+        edges['label'] += current_vocab_size
+        current_vocab_size += number_of_labels
 
         edges = edges.set_index(['src', 'dst'])['label'].to_dict()
 
@@ -147,6 +161,11 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
 
         # transform here
         node_attributes, kmeans_models = transform_features(node_attributes)
+        for col in node_attributes.columns:
+            number_of_labels = len(node_attributes[col].unique())
+            node_attributes[col] += current_vocab_size
+            # nx.set_node_attributes(G, node_attributes[col].to_dict(), col)
+            current_vocab_size += number_of_labels
         [nx.set_node_attributes(G, node_attributes[col].to_dict(), col) for col in node_attributes.columns]
 
     # Edge attributes
@@ -164,6 +183,10 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
     
         # transform here
         edge_attributes, kmeans_models = transform_features(edge_attributes)
+        for col in edge_attributes.columns:
+            number_of_labels = len(edge_attributes[col].unique())
+            edge_attributes[col] += current_vocab_size
+            current_vocab_size += number_of_labels
         edge_attributes.index = edges.keys()
         [nx.set_edge_attributes(G, edge_attributes[col].to_dict(), col)
          for col in edge_attributes.columns]
@@ -171,7 +194,6 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
         print ("DONE")
 
     return G
-
 
 def load_graph_kernel_labels(path_to_dataset_dir, dataset=None):
     files = listdir(path_to_dataset_dir)
@@ -196,3 +218,17 @@ def load_graph_kernel_labels(path_to_dataset_dir, dataset=None):
     graphLabels = graphLabels[0].to_dict()
 
     return graphLabels
+
+
+
+
+# Component Labels
+#  e.g. 1-6
+# Node Labels
+#  e.g. 7-12
+# Edge Labels
+#  e.g. 13-245
+# Node Attributes (transformed - elbow method will dynamically change how many labels to account for)
+#  e.g. 246-300
+# Edge Attributes(transformed - elbow method will dynamically change how many labels to account for)
+#  e.g. 301-320
