@@ -22,7 +22,14 @@ class TestUtilityFunctions(unittest.TestCase):
                 1:	"arrangement"
             },
         }
+        mappings_2 = {
+            "edge_labels": {
+                0:	"wedge",
+                1:	"arrangement"
+            }
+        }
         self.graph = load_graph_kernel_graph("./Cuneiform", mappings=mappings)
+        self.graph2 = load_graph_kernel_graph("./Cuneiform", mappings=mappings_2)
         self.y = load_graph_kernel_labels("./Cuneiform")
 
     def test_load(self):
@@ -32,11 +39,20 @@ class TestUtilityFunctions(unittest.TestCase):
                         'graph labels are not a dict')
         self.assertTrue(len(list(self.y.keys())) == len(list(self.y.values())),
                         'graph labels dict has keys, values mismatch')
+        print("test_load passes")
         return True
 
     def test_node_labels(self):
         labels = list(set(nx.get_node_attributes(self.graph, 'label_0').values()))
         self.assertGreater(len(labels), 0, 'loaded Graph has no node labels')
+        print("test_node_labels passes")
+        return True
+    
+    def test_no_node_labels(self):
+        labels = list(set(nx.get_node_attributes(
+            self.graph2, 'label_0').values()))
+        self.assertSetEqual(set([0,1,2,3]), set(labels), 'Graph contains node_labels not in the dataset')
+        print("test_no_node_labels passes")
         return True
 
     def test_edge_labels(self):
