@@ -3,6 +3,7 @@ from module import _get_components, get_structural_signatures, walk_as_string
 import unittest
 import networkx as nx
 from functools import reduce
+import time
 
 class TestUtilityFunctions(unittest.TestCase):
     def setUp(self):
@@ -102,7 +103,10 @@ class TestModuleFunctions(unittest.TestCase):
         self.graph = load_graph_kernel_graph("./Cuneiform", mappings=mappings)
         self.y = load_graph_kernel_labels("./Cuneiform")
         self.graph, self.pca, self.km = get_structural_signatures(self.graph)
+        self.walk_time = time.time()
         self.walks = walk_as_string(self.graph, self.y)
+        self.walk_time = time.time() - self.walk_time
+        print ("Walk took " + str(self.walk_time) + " seconds")
 
     def test_structural_signatures_assigned(self):
         structs = nx.get_node_attributes(self.graph, 'structure')
