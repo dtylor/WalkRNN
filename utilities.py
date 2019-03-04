@@ -106,6 +106,11 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
             this_label = node_labels[column].map(
                 mappings['node_labels'][column]).to_dict()
             nx.set_node_attributes(G=G, values=this_label, name='label_'+str(column))
+    else:
+        for column in range(len(node_labels.columns)):
+            this_label = node_labels[column].to_dict()
+            nx.set_node_attributes(
+                G=G, values=this_label, name='label_'+str(column))
 
     # Edge Labels
     if dataset+"_edge_labels.txt" in listdir(path_to_dataset_dir):
