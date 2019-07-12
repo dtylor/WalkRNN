@@ -109,7 +109,7 @@ def walk_as_string(networkXGraph, componentLabels, params={'num_walks': 20, 'wal
     node_words = {}
     edge_words = {}
 
-    def expressNode(node_idx):
+    def express_node(node_idx):
         if node_idx not in node_words:
             node = networkXGraph.nodes[node_idx]
             # node_words[node_idx] = " ".join([str(attribute)+"_"+str(node[attribute])
@@ -119,7 +119,7 @@ def walk_as_string(networkXGraph, componentLabels, params={'num_walks': 20, 'wal
             
         return node_words[node_idx]
     
-    def expressEdge(src_node, dst_node):
+    def express_edge(src_node, dst_node):
         if (src_node, dst_node) not in edge_words:
             edge = networkXGraph.edges[src_node, dst_node]
             # edge_words[src_node, dst_node] = " ".join([str(attribute)+"_"+str(edge[attribute])
@@ -136,8 +136,8 @@ def walk_as_string(networkXGraph, componentLabels, params={'num_walks': 20, 'wal
 
     walks = [list(a) for a in sorted_walks]
 
-    walks_as_words = [expressNode(walk[0]) + " " + " ".join([expressEdge(walk[step], walk[step+1]) + " " +
-                       expressNode(walk[step+1]) for step in range(len(walk) - 1)]) for walk in walks]
+    walks_as_words = [express_node(walk[0]) + " " + " ".join([express_edge(walk[step], walk[step+1]) + " " +
+                       express_node(walk[step+1]) for step in range(len(walk) - 1)]) for walk in walks]
 
     result = pd.DataFrame({"walk": walks_as_words, "start_node": np.array(walks)[:,0]})
 

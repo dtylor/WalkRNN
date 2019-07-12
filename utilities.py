@@ -6,7 +6,7 @@ import networkx as nx
 import module
 
 
-def copyGraph_nodes_edges(inGraph):
+def copy_graph_nodes_edges(inGraph):
     if (type(inGraph) == nx.Graph):
         G_copy = nx.Graph()
     elif (type(inGraph) == nx.DiGraph):
@@ -17,8 +17,8 @@ def copyGraph_nodes_edges(inGraph):
     return G_copy
 
 
-# todo parameterize kmeans clusters numbers by attribute name or add elbow method
-def processAttributes(FG, G_copy, current_vocab_size=0, is_node=True):
+# TODO: parameterize kmeans clusters numbers by attribute name or add elbow method
+def process_attributes(FG, G_copy, current_vocab_size=0, is_node=True):
     if is_node:
         features = list(set([z for x in list(FG.nodes(data=True)) for z in x[1].keys()]))
         if 'component' in features:
@@ -69,7 +69,7 @@ def transform_graph(G_prop):
     Returns: A networkX graph with the same graph structure and transformed properties, prepared for language model analysis.
 
     """
-    G_copy = copyGraph_nodes_edges(G_prop)
+    G_copy = copy_graph_nodes_edges(G_prop)
     w = nx.get_edge_attributes(G_prop, 'weight')
     nx.set_edge_attributes(G=G_copy, values=w, name='weight')
 
@@ -79,9 +79,9 @@ def transform_graph(G_prop):
                                                              params={'num_kmeans_clusters': 4, "num_pca_components": 4})
 
     # determine vocab representation of attributes of nodes then edges in the original graph and add to the copied graph
-    G_new_att, current_vocab_size = processAttributes(G_struct, G_copy, current_vocab_size, is_node=True)
+    G_new_att, current_vocab_size = process_attributes(G_struct, G_copy, current_vocab_size, is_node=True)
 
-    G_new_att, current_vocab_size = processAttributes(G_struct, G_new_att, current_vocab_size, is_node=False)
+    G_new_att, current_vocab_size = process_attributes(G_struct, G_new_att, current_vocab_size, is_node=False)
     return G_new_att, current_vocab_size
 
 
@@ -234,104 +234,8 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
     #Transform networkx property graph into a format prepared for WalkRNN
     G, current_vocab_size = transform_graph(G)
 
-#
-# current_vocab_size = 0
-#
-# # Components
-# components = pd.read_csv(
-#     path_to_dataset_dir + dataset + "_graph_indicator.txt", header=None)
-#
-# components.index += 1
-# components = components.rename(columns={0: "component"})
-#
-# components = components.component.to_dict()
-#
-# nx.set_node_attributes(G=G, values=components, name='component')
-#
-# # Node Labels
-# node_labels = pd.read_csv(path_to_dataset_dir +
-#                           dataset + "_node_labels.txt", header=None)
-# node_labels.index += 1
-#
-# for column in range(len(node_labels.columns)):
-#     number_of_labels = len(node_labels[column].unique()) + 1
-#     node_labels[column] += current_vocab_size
-#     this_label = node_labels[column].to_dict()
-#     nx.set_node_attributes(
-#         G=G, values=this_label, name='label_'+str(column))
-#     current_vocab_size += number_of_labels
-#     print("Added node_labels[" + str(column) + "]; current_vocab_size = "+str(current_vocab_size))
-#
-# # Edge Labels
-# if dataset+"_edge_labels.txt" in listdir(path_to_dataset_dir):
-#     edges = pd.read_csv(path_to_dataset_dir + dataset +"_A.txt",
-#                         header=None).rename(columns={0: "src", 1: "dst"})
-#
-#     edge_labels = pd.read_csv(
-#         path_to_dataset_dir + dataset + "_edge_labels.txt", header=None)
-#     edges.index += 1
-#     edge_labels.index += 1
-#     edges['label'] = edge_labels[0]
-#
-#     number_of_labels = len(edges['label'].unique()) + 1
-#     edges['label'] += current_vocab_size
-#     current_vocab_size += number_of_labels
-#     print("Added edge_labels; current_vocab_size = "+str(current_vocab_size))
-#
-#     edges = edges.set_index(['src', 'dst'])['label'].to_dict()
-#
-#     nx.set_edge_attributes(G=G, values=edges, name='label')
-#
-# # Node attributes
-# if dataset+"_node_attributes.txt" in listdir(path_to_dataset_dir):
-#     node_attributes = pd.read_csv(path_to_dataset_dir + dataset + "_node_attributes.txt",
-#                         header=None)
-#     if "node_attributes" in mappings:
-#         node_attributes = node_attributes.rename(
-#             columns={x: mappings['node_attributes'][x] for x in range(len(mappings['node_attributes']))})
-#     else:
-#         node_attributes = node_attributes.rename(columns={x: "attr_"+str(x) for x in range(len(node_attributes.columns))})
-#
-#     node_attributes.index += 1
-#
-#     # transform here
-#     node_attributes, kmeans_models = transform_features(node_attributes)
-#     for col in node_attributes.columns:
-#         number_of_labels = len(node_attributes[col].unique()) + 1
-#         node_attributes[col] += current_vocab_size
-#         current_vocab_size += number_of_labels
-#         print("Added node_attributes[" + str(col) + "]; current_vocab_size = " +
-#               str(current_vocab_size))
-#     [nx.set_node_attributes(G, node_attributes[col].to_dict(), col) for col in node_attributes.columns]
-#
-# # Edge attributes
-# if dataset+"_edge_attributes.txt" in listdir(path_to_dataset_dir):
-#     edge_attributes = pd.read_csv(path_to_dataset_dir + dataset + "_edge_attributes.txt",
-#                                   header=None)
-#     if "edge_attributes" in mappings:
-#         edge_attributes = edge_attributes.rename(
-#             columns={x: "edge_"+mappings['edge_attributes'][x] for x in range(len(mappings['edge_attributes']))})
-#     else:
-#         edge_attributes = edge_attributes.rename(
-#             columns={x: "edge_attr_"+str(x) for x in range(len(edge_attributes.columns))})
-#
-#     edge_attributes.index += 1
-#
-#     # transform here
-#     edge_attributes, kmeans_models = transform_features(edge_attributes)
-#     for col in edge_attributes.columns:
-#         number_of_labels = len(edge_attributes[col].unique()) + 1
-#         edge_attributes[col] += current_vocab_size
-#         current_vocab_size += number_of_labels
-#         print("Added edge_attributes[" + str(col) + "]; current_vocab_size = " +
-#               str(current_vocab_size))
-#     edge_attributes.index = edges.keys()
-#     [nx.set_edge_attributes(G, edge_attributes[col].to_dict(), col)
-#      for col in edge_attributes.columns]
-#
     print ("DONE")
     return G
-    #return {"G": G, "vocab_size": current_vocab_size}
 
 
 def load_graph_kernel_labels(path_to_dataset_dir, dataset=None):
