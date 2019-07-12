@@ -15,7 +15,6 @@ def _get_components(networkXGraph):
     return pd.DataFrame([{"node": k, "component": v} for k, v in nx.get_node_attributes(
         G=networkXGraph, name='component').items()]).groupby('component')['node'].apply(list).to_dict()
 
-
 def get_structural_signatures(networkXGraph, vocab_size=1, params={'num_kmeans_clusters': 4, "num_pca_components": 6}):
     """
     Get structural embeddings using GraphWave.
