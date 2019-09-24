@@ -138,10 +138,6 @@ learn.fit_one_cycle(1, 1e-2, moms=(0.8,0.7))
 learn.recorder.plot_losses()
 learn.save('fit-head')
 
-# !mkdir /content/drive/My\ Drive/AIDS
-# !cp -r /content/result /content/drive/My\ Drive/AIDS
-
-#learn.load('fit-head')
 learn.unfreeze()
 learn.lr_find()
 learn.recorder.plot()
@@ -150,14 +146,14 @@ learn.fit_one_cycle(3, .05, moms=(0.8,0.7))
 
 learn.save('fit-head')
 
-!cp -r /content/result /content/drive/My\ Drive/AIDS
-
 learn.save_encoder('fine_tuned_enc3')
 
 df = walks.sample(frac=1).reset_index(drop=True)
 df['index1']=df.index
+
 g = df.groupby('component')
 df['RN'] = g['index1'].rank(method='min')
+
 df[df['component']==1].head()
 
 """Choose a path per node and concatenate for entire component"""
@@ -178,7 +174,7 @@ test =  pd.merge(df_text_comp, test_tmp, on='component', sort=False)
 val =  pd.merge(df_text_comp, val_tmp, on='component', sort=False)
 (train.shape,val.shape, test.shape, train.shape[0]/df_text_comp.shape[0])
 
-bs=32
+bs=32#48
 
 data_clas = TextClasDataBunch.from_df(train_df=train[['text','label']],valid_df=val[['text','label']],  path=mypath, text_cols='text',label_cols = 'label', vocab=data_lm.vocab)
 
