@@ -128,30 +128,8 @@ data_lm = load_data(mypath, 'data_lm.pkl', bs=bs)
 
 data_lm.show_batch() # take a look at the batch fed into the GPU
 
-#awd_lstm_lm_config = dict(emb_sz=400, n_hid=400, n_layers=1, pad_token=1, qrnn=False, bidir=False, output_p=0.25,
-      #                    hidden_p=0.1, input_p=0.2, embed_p=0.02, weight_p=0.15, tie_weights=True, out_bias=True)
-
-#awd_lstm_clas_config = dict(emb_sz=400, n_hid=400, n_layers=1, pad_token=1, qrnn=False, bidir=False, output_p=0.4,
-       #                hidden_p=0.2, input_p=0.6, embed_p=0.1, weight_p=0.5, tie_weights=True, out_bias=True)
-
-
-#awd_lstm_lm_config = dict(emb_sz=400, n_hid=400, n_layers=1, pad_token=1, qrnn=False, bidir=False, output_p=0.25,hidden_p=0.1, input_p=0.2, embed_p=0.02, weight_p=0.15, tie_weights=True, out_bias=True)
-
-#awd_lstm_clas_config = dict(emb_sz=400, n_hid=400, n_layers=1, pad_token=1, qrnn=False, bidir=False, output_p=0.4, hidden_p=0.2, input_p=0.6, embed_p=0.1, weight_p=0.5)
-#awd_lstm_lm_config = dict(emb_sz=400, n_hid=1150, n_layers=3, pad_token=1, qrnn=False, bidir=False, output_p=0.25,
- #                         hidden_p=0.1, input_p=0.2, embed_p=0.02, weight_p=0.15, tie_weights=True, out_bias=True)
-
-#awd_lstm_clas_config = dict(emb_sz=400, n_hid=1150, n_layers=3, pad_token=1, qrnn=False, bidir=False, output_p=0.4,
-  #                     hidden_p=0.2, input_p=0.6, embed_p=0.1, weight_p=0.5)
-
-#dAWD_LSTM = {'hid_name':'emb_sz', 'url':URLs.WT103_FWD, 'url_bwd':URLs.WT103_BWD,'config_lm':awd_lstm_lm_config, 'split_lm': awd_lstm_lm_split, 'config_clas':awd_lstm_clas_config, 'split_clas': awd_lstm_clas_split}
-
-#awd_lstm_lm_config = dict(emb_sz=400, n_hid=1152, n_layers=3, pad_token=1, qrnn=False, bidir=False, output_p=0.1, hidden_p=0.15, input_p=0.25, embed_p=0.02, weight_p=0.2, tie_weights=True, out_bias=True)
-
 awd_lstm_lm_config = dict(emb_sz=400, n_hid=400, n_layers=1, pad_token=1, qrnn=False, bidir=False, output_p=0.1, hidden_p=0.15, input_p=0.25, embed_p=0.02, weight_p=0.2, tie_weights=True, out_bias=True)
 awd_lstm_clas_config = dict(emb_sz=400, n_hid=400, n_layers=1, pad_token=1, qrnn=False, bidir=False, output_p=0.4,  hidden_p=0.3, input_p=0.4, embed_p=0.05, weight_p=0.5)
-
-#torch.cuda.set_device(1)
 
 learn = language_model_learner(data_lm,arch=AWD_LSTM,config= awd_lstm_lm_config,drop_mult=1.8, callback_fns=ShowGraph,pretrained=False)
 learn.lr_find()
@@ -178,12 +156,9 @@ learn.save_encoder('fine_tuned_enc3')
 
 df = walks.sample(frac=1).reset_index(drop=True)
 df['index1']=df.index
-#g = df.groupby('node')
 g = df.groupby('component')
 df['RN'] = g['index1'].rank(method='min')
-#df[(df['RN']==1.0) & (df['component']=='1')].head()
 df[df['component']==1].head()
-#df.head()
 
 """Choose a path per node and concatenate for entire component"""
 
@@ -203,7 +178,7 @@ test =  pd.merge(df_text_comp, test_tmp, on='component', sort=False)
 val =  pd.merge(df_text_comp, val_tmp, on='component', sort=False)
 (train.shape,val.shape, test.shape, train.shape[0]/df_text_comp.shape[0])
 
-bs=32#48
+bs=32
 
 data_clas = TextClasDataBunch.from_df(train_df=train[['text','label']],valid_df=val[['text','label']],  path=mypath, text_cols='text',label_cols = 'label', vocab=data_lm.vocab)
 
