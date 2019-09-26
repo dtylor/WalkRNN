@@ -15,7 +15,13 @@ def _get_components(networkXGraph):
     return pd.DataFrame([{"node": k, "component": v} for k, v in nx.get_node_attributes(
         G=networkXGraph, name='component').items()]).groupby('component')['node'].apply(list).to_dict()
 
-def get_structural_signatures(networkXGraph, vocab_size=1, params={'num_kmeans_clusters': 4, "num_pca_components": 6}):
+def divide_chunks(l, n): 
+      
+    # looping till length l 
+    for i in range(0, len(l), n):  
+        yield l[i:i + n] 
+        
+def get_structural_signatures(networkXGraph, vocab_size=1, params={'num_kmeans_clusters': 4, "num_pca_components": 6, "num_batch":500}):
     """
     Get structural embeddings using GraphWave.
 
@@ -31,23 +37,26 @@ def get_structural_signatures(networkXGraph, vocab_size=1, params={'num_kmeans_c
     """
     nb_clust = params['num_kmeans_clusters']
     n_components = params['num_pca_components']
+    batch_size = params['num_batch']
 
-    components = _get_components(networkXGraph)
+    components = list(divide_chunks(list(_get_components(networkXGraph).values()),batch_size))
 
     heat_signatures = []
     nodes_list = []
 
-    for subgraph_id, nodes in components.items():
+    for n in components:
+        #flatten list of lists
+        nodes =  [item for sublist in n for item in sublist]
         subgraph = networkXGraph.subgraph(nodes)
         chi, heat_print, taus = graphwave.graphwave_alg(
-            subgraph, np.linspace(0, 100, 25), taus='auto', verbose=True)
+            subgraph, np.linspace(0, 10, 20), taus='auto', verbose=True)
         if len(subgraph.nodes) < n_components:
             print("Omitting graph " + str(subgraph_id) + " with node count: " +
                 str(len(subgraph.nodes)) + " < " + str(n_components))
         else:
             heat_signatures += chi.tolist()
             nodes_list += nodes
-
+    print("finished graphwave_alg batches")
     pca = PCA(n_components = n_components)
     trans_data_all = pca.fit_transform(StandardScaler().fit_transform(np.array(heat_signatures)))
     km = KMeans(n_clusters = nb_clust).fit(trans_data_all)
