@@ -56,7 +56,7 @@ def process_attributes(FG, G_copy, current_vocab_size=0, is_node=True):
     return G_copy, current_vocab_size
 
 
-def transform_graph(G_prop):
+def transform_graph(G_prop,params={'num_kmeans_clusters': 4, "num_pca_components": 4, "num_batch":500}):
     """
     Transforms input networkX property graph into another graph with properties ready for language model analysis.
         Quantitative variables are made word-like/ categorical
@@ -76,7 +76,7 @@ def transform_graph(G_prop):
     current_vocab_size = 0
     # Learn structural signatures of each node and apply to node as an attribute to the original graph
     G_struct, pca, kmeans = module.get_structural_signatures(G_prop, 0,
-                                                             params={'num_kmeans_clusters': 4, "num_pca_components": 4})
+                                                             params)
 
     # determine vocab representation of attributes of nodes then edges in the original graph and add to the copied graph
     G_new_att, current_vocab_size = process_attributes(G_struct, G_copy, current_vocab_size, is_node=True)
@@ -115,7 +115,7 @@ def transform_features(features_df, nb_clust=6):
     return new_features_df, kmeans_models
 
 
-def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
+def load_graph_kernel_graph(path_to_dataset_dir, params={'num_kmeans_clusters': 4, "num_pca_components": 4, "num_batch":500},dataset=None, mappings={}):
     """
     Loads Graph Kernel dataset into a NetworkX graph.
 
@@ -232,7 +232,7 @@ def load_graph_kernel_graph(path_to_dataset_dir, dataset=None, mappings={}):
         [nx.set_edge_attributes(G, edge_attributes[col].to_dict(), col)
          for col in edge_attributes.columns]
     #Transform networkx property graph into a format prepared for WalkRNN
-    G, current_vocab_size = transform_graph(G)
+    G, current_vocab_size = transform_graph(G, params)
 
     print ("DONE")
     return G
