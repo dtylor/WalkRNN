@@ -18,7 +18,7 @@ def copy_graph_nodes_edges(inGraph):
 
 
 # TODO: parameterize kmeans clusters numbers by attribute name or add elbow method
-def process_attributes(FG, G_copy, current_vocab_size=0, is_node=True):
+def process_attributes(FG, G_copy, current_vocab_size=0, is_node=True,nb_clust=6):
     if is_node:
         features = list(set([z for x in list(FG.nodes(data=True)) for z in x[1].keys()]))
         if 'component' in features:
@@ -41,7 +41,7 @@ def process_attributes(FG, G_copy, current_vocab_size=0, is_node=True):
             # apply kmeans to floats by default
             df = pd.DataFrame.from_dict(feat_tmp, orient='index')
             df.columns = [feat]
-            attributes, kmeans_models = transform_features(df)
+            attributes, kmeans_models = transform_features(df,nb_clust)
             feat_tmp = attributes[feat].to_dict()
             uniq = set(val for val in feat_tmp.values())
 
@@ -56,7 +56,7 @@ def process_attributes(FG, G_copy, current_vocab_size=0, is_node=True):
     return G_copy, current_vocab_size
 
 
-def transform_graph(G_prop,params={'num_kmeans_clusters': 4, "num_pca_components": 4, "num_batch":500}):
+def transform_graph(G_prop,params={'num_kmeans_clusters': 4, "num_pca_components": 4, "num_batch":500, 'num_att_kmeans_clusters': 6}):
     """
     Transforms input networkX property graph into another graph with properties ready for language model analysis.
         Quantitative variables are made word-like/ categorical
@@ -69,6 +69,7 @@ def transform_graph(G_prop,params={'num_kmeans_clusters': 4, "num_pca_components
     Returns: A networkX graph with the same graph structure and transformed properties, prepared for language model analysis.
 
     """
+    nb_att_clust = params['num_att_kmeans_clusters']
     G_copy = copy_graph_nodes_edges(G_prop)
     w = nx.get_edge_attributes(G_prop, 'weight')
     nx.set_edge_attributes(G=G_copy, values=w, name='weight')
@@ -77,11 +78,11 @@ def transform_graph(G_prop,params={'num_kmeans_clusters': 4, "num_pca_components
     # Learn structural signatures of each node and apply to node as an attribute to the original graph
     G_struct, pca, kmeans = module.get_structural_signatures(G_prop, 0,
                                                              params)
-
+    
     # determine vocab representation of attributes of nodes then edges in the original graph and add to the copied graph
-    G_new_att, current_vocab_size = process_attributes(G_struct, G_copy, current_vocab_size, is_node=True)
+    G_new_att, current_vocab_size = process_attributes(G_struct, G_copy, current_vocab_size, is_node=True,nb_att_clust)
 
-    G_new_att, current_vocab_size = process_attributes(G_struct, G_new_att, current_vocab_size, is_node=False)
+    G_new_att, current_vocab_size = process_attributes(G_struct, G_new_att, current_vocab_size, is_node=False,nb_att_clust)
     return G_new_att, current_vocab_size
 
 
@@ -115,7 +116,7 @@ def transform_features(features_df, nb_clust=6):
     return new_features_df, kmeans_models
 
 
-def load_graph_kernel_graph(path_to_dataset_dir, params={'num_kmeans_clusters': 4, "num_pca_components": 4, "num_batch":500},dataset=None, mappings={}):
+def load_graph_kernel_graph(path_to_dataset_dir, params={'num_kmeans_clusters': 4, "num_pca_components": 4, "num_batch":500,  'num_att_kmeans_clusters': 6},dataset=None, mappings={}):
     """
     Loads Graph Kernel dataset into a NetworkX graph.
 
