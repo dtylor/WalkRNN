@@ -80,9 +80,9 @@ def transform_graph(G_prop,params={'num_kmeans_clusters': 4, "num_pca_components
                                                              params)
     
     # determine vocab representation of attributes of nodes then edges in the original graph and add to the copied graph
-    G_new_att, current_vocab_size = process_attributes(G_struct, G_copy, current_vocab_size, is_node=True,nb_att_clust)
+    G_new_att, current_vocab_size = process_attributes(G_struct, G_copy, current_vocab_size, is_node=True,nb_clust=nb_att_clust)
 
-    G_new_att, current_vocab_size = process_attributes(G_struct, G_new_att, current_vocab_size, is_node=False,nb_att_clust)
+    G_new_att, current_vocab_size = process_attributes(G_struct, G_new_att, current_vocab_size, is_node=False,nb_clust=nb_att_clust)
     return G_new_att, current_vocab_size
 
 
