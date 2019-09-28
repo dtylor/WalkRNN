@@ -116,7 +116,7 @@ def transform_features(features_df, nb_clust=6):
     return new_features_df, kmeans_models
 
 
-def load_graph_kernel_graph(path_to_dataset_dir, params={'num_kmeans_clusters': 4, "num_pca_components": 4, "num_batch":500,  'num_att_kmeans_clusters': 6},dataset=None, mappings={}):
+def load_graph_kernel_graph(path_to_dataset_dir,dataset=None, mappings={}):
     """
     Loads Graph Kernel dataset into a NetworkX graph.
 
@@ -232,8 +232,6 @@ def load_graph_kernel_graph(path_to_dataset_dir, params={'num_kmeans_clusters': 
         edge_attributes.index = edges.keys()
         [nx.set_edge_attributes(G, edge_attributes[col].to_dict(), col)
          for col in edge_attributes.columns]
-    #Transform networkx property graph into a format prepared for WalkRNN
-    G, current_vocab_size = transform_graph(G, params)
 
     print ("DONE")
     return G
