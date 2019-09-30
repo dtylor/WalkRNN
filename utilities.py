@@ -179,14 +179,15 @@ def load_graph_kernel_graph(path_to_dataset_dir,dataset=None, mappings={}):
 
 
     # Node Labels
-    node_labels = pd.read_csv(path_to_dataset_dir +
+    if dataset + "_node_labels.txt" in listdir(path_to_dataset_dir):
+        node_labels = pd.read_csv(path_to_dataset_dir +
                               dataset + "_node_labels.txt", header=None)
-    node_labels.index += 1
+        node_labels.index += 1
 
-    for column in range(len(node_labels.columns)):
-        this_label = node_labels[column].to_dict()
-        nx.set_node_attributes(
-            G=G, values=this_label, name='label_' + str(column))
+        for column in range(len(node_labels.columns)):
+            this_label = node_labels[column].to_dict()
+            nx.set_node_attributes(
+                G=G, values=this_label, name='label_' + str(column))
 
     # Edge Labels
     if dataset + "_edge_labels.txt" in listdir(path_to_dataset_dir):
