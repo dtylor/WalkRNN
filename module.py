@@ -49,7 +49,7 @@ def get_structural_signatures(networkXGraph, vocab_size=1, params={'num_kmeans_c
         nodes =  [item for sublist in n for item in sublist]
         subgraph = networkXGraph.subgraph(nodes)
         chi, heat_print, taus = graphwave.graphwave_alg(
-            subgraph, np.linspace(0, 10, 20), taus='auto', verbose=True)
+            subgraph, np.linspace(0, 100, 20), taus='auto', verbose=True)
         if len(subgraph.nodes) < n_components:
             print("Omitting graph " + str(subgraph_id) + " with node count: " +
                 str(len(subgraph.nodes)) + " < " + str(n_components))
