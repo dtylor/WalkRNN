@@ -8,11 +8,15 @@ from utilities import *
 from module import *
 
 # Load graph from csv and learn structural signatures of each node and apply to node as an attribute
-a = load_graph_kernel_graph("./Cuneiform")
-y = load_graph_kernel_labels("./Cuneiform")
+Gkern = load_graph_kernel_graph("./examples/data/AIDS")
+y = load_graph_kernel_labels("./examples/data/AIDS")
+
+#Transform networkx property graph into a format prepared for WalkRNN
+G, current_vocab_size = transform_graph(Gkern, params={'num_kmeans_clusters': 4, "num_pca_components": 6, "num_batch":500, 'num_att_kmeans_clusters': 5})
 
 # Generate 20 walks from each node
-c = walk_as_string(b[0], y, params={'num_walks': 20, 'walk_length': 30})
+walks = walk_as_string(G, componentLabels = y, params={'num_walks': 20, 'walk_length': 30})
+
 ```
 
 See Demonstration.ipynb for more details
