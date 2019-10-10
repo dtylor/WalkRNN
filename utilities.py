@@ -164,7 +164,7 @@ def load_graph_kernel_graph(path_to_dataset_dir,dataset=None, mappings={}):
 
     # Load graph kernel csv file(s) into a directed networkx Graph
     G = nx.read_edgelist(path_to_dataset_dir + dataset + "_A.txt",
-                         delimiter=',', nodetype=int, encoding="utf-8")
+                         create_using=nx.DiGraph(),delimiter=',', nodetype=int, encoding="utf-8")
 
     # Components
     components = pd.read_csv(
