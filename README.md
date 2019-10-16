@@ -7,11 +7,11 @@ A utility module for experimenting with graph embeddings for use in language mod
 from utilities import *
 from module import *
 
-# Load graph from csv and learn structural signatures of each node and apply to node as an attribute
+# Load graph from csv
 Gkern = load_graph_kernel_graph("./examples/data/AIDS")
 y = load_graph_kernel_labels("./examples/data/AIDS")
 
-#Transform networkx property graph into a format prepared for WalkRNN
+#Learn structural signatures of each node and apply to node as an attribute and transform networkx property graph into a format prepared for WalkRNN
 G, current_vocab_size = transform_graph(Gkern, params={'num_kmeans_clusters': 4, "num_pca_components": 6, "num_batch":500, 'num_att_kmeans_clusters': 5})
 
 # Generate 20 walks from each node
