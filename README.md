@@ -11,8 +11,8 @@ from module import *
 Gkern = load_graph_kernel_graph("./examples/data/AIDS")
 y = load_graph_kernel_labels("./examples/data/AIDS")
 
-#Learn structural signatures of each node and apply to node as an attribute
-#Then transform networkx property graph into a format prepared for WalkRNN
+#Learn structural signatures of each node in networkx property graph and apply to node as an attribute
+#Then transform into a format prepared for WalkRNN
 G, current_vocab_size = transform_graph(Gkern, params={'num_kmeans_clusters': 4, "num_pca_components": 6, "num_batch":500, 'num_att_kmeans_clusters': 5})
 
 # Generate 20 walks from each node
