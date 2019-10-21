@@ -1,6 +1,6 @@
 # WalkRNN
 
-A utility module for experimenting with graph embeddings for use in language models.
+A utility module for experimenting with graph embeddings for use in language models.  See paper at http://viXra.org/abs/1910.0362  
 
 ## Usage
 ```python
