@@ -39,6 +39,11 @@ Third party libraries used include:
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copyright (c) 2016 Aditya Grover<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://github.com/aditya-grover/node2vec<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MIT License<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**fast.ai**<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copyright 2017 onwards, fast.ai, Inc.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://github.com/fastai/fastai<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Licensed under the Apache License, Version 2.0<br>
     
 Third party dataset downloaded from this site: 
 https://ls11-www.cs.tu-dortmund.de/staff/morris/graphkerneldatasets
